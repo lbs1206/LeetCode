@@ -14,33 +14,39 @@
  * }
  */
 class Solution {
-    List<List<Integer>> list = new ArrayList<>();
+    Stack<Integer> stack = new Stack<>();
+    List<List<Integer>> result = new ArrayList<>();
     
     public List<List<Integer>> pathSum(TreeNode root, int targetSum) {
-        boolean check = hasPathSum(root,targetSum,"0");
-        
-        return list;
-    };
+        solve(root, targetSum, 0);
+        return result;
+    }
     
-    public boolean hasPathSum(TreeNode root, int targetSum,String hist) {
-        if(root == null) return false;
-        
-        String temp_hist = hist + "," + Integer.toString(root.val);
-        
-        int currentSum = targetSum - root.val;
-        if(currentSum == 0 && root.left == null && root.right == null){
-            String[ ] nums = temp_hist.split(",");
-            List<Integer> item = new ArrayList<>();
-
-            for (int i = 1; i < nums.length; i++) {
-                int num = Integer.parseInt(nums[i]);
-                item.add(num);
-            }
-            list.add(item);
-        
-            return false;   
+    public void solve(TreeNode root, int targetSum, int currentSum) {
+        if(root == null) {
+            return;
         }
         
-        return hasPathSum(root.left, currentSum,temp_hist) || hasPathSum(root.right, currentSum,temp_hist);
+        stack.push(root.val);
+        currentSum += root.val;
+        
+        if(targetSum == currentSum && root.left == null && root.right == null) {
+            save();
+            stack.pop();
+            return;
+        }
+        
+        solve(root.left, targetSum, currentSum);
+        solve(root.right, targetSum, currentSum);
+        
+        stack.pop();
+    }
+    
+    public void save() {
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < stack.size(); i++) {
+            list.add(stack.elementAt(i));
+        }
+        result.add(list);
     }
 }
